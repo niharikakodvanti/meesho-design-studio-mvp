@@ -1,23 +1,13 @@
-import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  authDomain: "meesho-design-studio.firebaseapp.com",
-  projectId: "meesho-design-studio",
-  storageBucket: "meesho-design-studio.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdefghijklmnop"
-}
+  apiKey: "AIzaSyDdHMBpX5z9NLDXHxhb5A1eE3XVHbxnegE",
+  authDomain: "meesho-design-studio-mvp.firebaseapp.com",
+  projectId: "meesho-design-studio-mvp",
+  storageBucket: "meesho-design-studio-mvp.firebasestorage.app",
+  messagingSenderId: "1075568988546",
+  appId: "1:1075568988546:web:bee83bbab1ed439487bf9b"
+};
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig)
-
-// Initialize Firebase Authentication and get a reference to the service
-export const auth = getAuth(app)
-
-// Initialize Cloud Firestore and get a reference to the service
-export const db = getFirestore(app)
-
-export default app 
+const app = initializeApp(firebaseConfig);
+export default app; 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Heart, MessageCircle, Share2, Download } from 'lucide-react'
 
@@ -30,6 +30,94 @@ export default function GeneratedDesign() {
     }
   ])
 
+  // New state for AI image generation
+  const [isGenerating, setIsGenerating] = useState(true)
+  const [designImage, setDesignImage] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [sketchImage, setSketchImage] = useState<string | null>(null)
+  const [prompt, setPrompt] = useState<string | null>(null)
+
+  const demoAIImage = "https://your-static-image-url.com/sample-ai-output.png";
+  const demoSketch = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
+  const demoPrompt = 'Lehenga with floral embroidery and pastel shades';
+
+  useEffect(() => {
+    // Detect demo mode
+    const isDemo = localStorage.getItem('demoMode') === 'true';
+    if (isDemo) {
+      setPrompt(demoPrompt);
+      setSketchImage(demoSketch);
+      setDesignImage(demoAIImage);
+      setIsGenerating(false);
+      setError(null);
+      // Optionally clear demoMode after use
+      // localStorage.removeItem('demoMode');
+      return;
+    }
+    // Retrieve sketch image and prompt from localStorage
+    const img = localStorage.getItem('sketchImage')
+    const userPrompt = localStorage.getItem('prompt') || 'Convert this sketch into a fashion outfit'
+    setPrompt(userPrompt)
+    setSketchImage(img)
+    setIsGenerating(true)
+    setError(null)
+    setDesignImage(null)
+
+    const generateDesign = async () => {
+      try {
+        const response = await fetch('/api/generate-design', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: userPrompt,
+            sketchImage: img,
+          }),
+        })
+        const data = await response.json()
+        if (!response.ok || data.error) {
+          setError('Failed to generate design')
+          setIsGenerating(false)
+          return
+        }
+        // If Replicate returns a status URL, poll it
+        if (data.urls && data.urls.get) {
+          let status = data.status
+          let pollUrl = data.urls.get
+          let pollResult = data
+          while (status && status !== 'succeeded' && status !== 'failed' && status !== 'canceled') {
+            await new Promise(res => setTimeout(res, 2000))
+            const pollRes = await fetch(pollUrl)
+            pollResult = await pollRes.json()
+            status = pollResult.status
+          }
+          if (status === 'succeeded' && pollResult.output) {
+            setDesignImage(Array.isArray(pollResult.output) ? pollResult.output[0] : pollResult.output)
+            setIsGenerating(false)
+          } else {
+            setError('Failed to generate design')
+            setIsGenerating(false)
+          }
+        } else if (data.output) {
+          setDesignImage(Array.isArray(data.output) ? data.output[0] : data.output)
+          setIsGenerating(false)
+        } else {
+          setError('Failed to generate design')
+          setIsGenerating(false)
+        }
+      } catch (err) {
+        setError('Failed to generate design')
+        setIsGenerating(false)
+      }
+    }
+    if (img) {
+      generateDesign()
+    } else {
+      setError('No sketch image found')
+      setIsGenerating(false)
+    }
+    // No timeout needed anymore
+  }, [id])
+
   const handleLike = () => {
     setLiked(!liked)
     setLikes(liked ? likes - 1 : likes + 1)
@@ -48,9 +136,6 @@ export default function GeneratedDesign() {
     }
   }
 
-  // Mock AI-generated design image
-  const designImage = 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=800&fit=crop'
-
   return (
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-8">
@@ -61,12 +146,64 @@ export default function GeneratedDesign() {
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Design Image */}
         <div className="card">
-          <div className="relative">
-            <img
-              src={designImage}
-              alt="AI Generated Dress Design"
-              className="w-full h-auto rounded-lg shadow-lg"
-            />
+          {prompt && (
+            <div style={{ marginBottom: '1rem', fontStyle: 'italic' }}>
+              🧵 Prompt: {prompt}
+            </div>
+          )}
+          <div className="relative min-h-[400px] flex items-center justify-center">
+            {isGenerating && (
+              <div className="flex flex-col items-center justify-center w-full h-full min-h-[400px]">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-meesho-primary mb-4"></div>
+                <span className="text-meesho-primary font-medium">Generating your design...</span>
+                {sketchImage && (
+                  <div className="mt-4">
+                    <span className="block text-xs text-gray-400 mb-1">Your Sketch Preview</span>
+                    <img src={sketchImage} alt="Sketch Preview" className="w-32 h-auto border rounded shadow" />
+                  </div>
+                )}
+              </div>
+            )}
+            {error && !isGenerating && (
+              <div className="flex flex-col items-center justify-center w-full h-full min-h-[400px]">
+                <span className="text-red-500 font-medium mb-2">{error}</span>
+                <button
+                  className="btn-primary"
+                  onClick={() => {
+                    setIsGenerating(true)
+                    setError(null)
+                    setDesignImage(null)
+                    // Retry logic (simulate again)
+                    setTimeout(() => {
+                      setDesignImage('https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=800&fit=crop')
+                      setIsGenerating(false)
+                    }, 2000)
+                  }}
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
+            {designImage && !isGenerating && !error && (
+              <div style={{ display: 'flex', gap: '2rem', marginTop: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                <div style={{ flex: '1 1 250px', minWidth: 0 }}>
+                  <h4 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>Your Sketch</h4>
+                  <img
+                    src={sketchImage || ''}
+                    alt="User sketch"
+                    style={{ maxWidth: '100%', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                  />
+                </div>
+                <div style={{ flex: '1 1 250px', minWidth: 0 }}>
+                  <h4 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>AI Output</h4>
+                  <img
+                    src={designImage}
+                    alt="Generated design"
+                    style={{ maxWidth: '100%', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                  />
+                </div>
+              </div>
+            )}
             <div className="absolute top-4 right-4">
               <button className="bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-colors">
                 <Download className="w-5 h-5 text-meesho-dark" />

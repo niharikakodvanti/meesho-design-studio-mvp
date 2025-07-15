@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import type { User, UserCredential } from 'firebase/auth'
 import { 
-  User, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut, 
@@ -12,10 +12,10 @@ import { auth } from '../firebase/config'
 
 interface AuthContextType {
   currentUser: User | null
-  login: (email: string, password: string) => Promise<void>
-  signup: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<UserCredential>
+  signup: (email: string, password: string) => Promise<UserCredential>
   logout: () => Promise<void>
-  signInWithGoogle: () => Promise<void>
+  signInWithGoogle: () => Promise<UserCredential>
   loading: boolean
 }
 
