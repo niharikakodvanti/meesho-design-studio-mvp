@@ -23,13 +23,11 @@ export default function Sketch() {
   const [strokeColor, setStrokeColor] = useState('#000000')
   const [fillColor, setFillColor] = useState('rgba(0,0,0,0)')
   const [strokeWidth, setStrokeWidth] = useState(5)
-  const [polygonPoints, setPolygonPoints] = useState<any[]>([])
   const [drawingObject, setDrawingObject] = useState<any>(null)
   const [prompt, setPrompt] = useState('')
 
   // Helper to reset drawing state
   const resetDrawingState = () => {
-    setPolygonPoints([])
     setDrawingObject(null)
     if (fabricCanvasRef.current) {
       fabricCanvasRef.current.isDrawingMode = false
@@ -179,7 +177,7 @@ export default function Sketch() {
         }
       }
 
-      const onMouseUp = (opt: any) => {
+      const onMouseUp = () => {
         if (activeTool === 'rect' || activeTool === 'ellipse' || activeTool === 'line') {
           isMouseDown = false
           tempObj && tempObj.set({ selectable: true, evented: true })
@@ -192,7 +190,7 @@ export default function Sketch() {
       }
 
       // Polygon: double click to finish
-      const onDblClick = (opt: any) => {
+      const onDblClick = () => {
         if (activeTool === 'polygon' && polygonTempPoints.length > 2) {
           if (drawingObject) drawingObject.set({ selectable: true, evented: true })
           polygonTempPoints = []
