@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fabric } from 'fabric'
-import { Trash2, Save, Sparkles, Palette, Square, Circle, Triangle, PenTool, Minus, Eraser, Droplet } from 'lucide-react'
+import { Trash2, Save, Sparkles, Palette, Square, Circle, Triangle, PenTool, Minus, Eraser } from 'lucide-react'
 
 const TOOLBAR = [
   { key: 'freedraw', label: 'Free Draw', icon: <PenTool className="w-5 h-5" /> },
