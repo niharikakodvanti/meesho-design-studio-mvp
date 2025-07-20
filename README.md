@@ -40,7 +40,19 @@ Use **Demo Mode** for instant access — no login required.
 | AI API        | Replicate (Stable Diffusion)             |
 | Auth & Backend| Firebase Authentication, Firestore (optional) |
 | Hosting       | Netlify                                  |
+📸 Screenshots
+<img width="320" height="275" alt="image" src="https://github.com/user-attachments/assets/23c5b5b2-52c5-403f-b82c-a262667906cf" />
 
+
+Sketch Canvas
+
+<img width="393" height="344" alt="image" src="https://github.com/user-attachments/assets/dcf2c698-902f-4c3f-aee1-efa9211f9cd7" />
+
+Text Prompt Input
+
+<img width="704" height="556" alt="image" src="https://github.com/user-attachments/assets/81a192cc-ca9f-4778-883d-5aafec223c35" />
+
+Result Preview
 ---
 
 ## 🧪 Run Locally — Setup Guide
@@ -88,19 +100,7 @@ User can save, preview, and engage with leaderboard
 
 Future scope includes real-time sharing and community feedback
 
-📸 Screenshots
-<img width="320" height="275" alt="image" src="https://github.com/user-attachments/assets/23c5b5b2-52c5-403f-b82c-a262667906cf" />
 
-
-Sketch Canvas
-
-<img width="393" height="344" alt="image" src="https://github.com/user-attachments/assets/dcf2c698-902f-4c3f-aee1-efa9211f9cd7" />
-
-Text Prompt Input
-
-<img width="704" height="556" alt="image" src="https://github.com/user-attachments/assets/81a192cc-ca9f-4778-883d-5aafec223c35" />
-
-Result Preview
 
 
 🔮 Future Scope
